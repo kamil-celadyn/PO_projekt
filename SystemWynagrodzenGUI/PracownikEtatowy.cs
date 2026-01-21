@@ -1,15 +1,19 @@
-﻿namespace SystemWynagrodzen
+﻿using System;
+using System.Text.Json.Serialization;
+
+namespace SystemWynagrodzen
 {
     // Punkt 3: Dziedziczenie
     public class PracownikEtatowy : Pracownik, IBonusowalny
     {
         public decimal PensjaZasadnicza { get; set; }
 
-        public PracownikEtatowy(string imie, string nazwisko, string pesel, decimal pensja)
+        [JsonConstructor]
+        public PracownikEtatowy(string imie, string nazwisko, string pesel, decimal pensjaZasadnicza)
             : base(imie, nazwisko, pesel)
         {
-            if (pensja < 0) throw new KadryException("Pensja nie może być ujemna!");
-            PensjaZasadnicza = pensja;
+            if (pensjaZasadnicza < 0) throw new KadryException("Pensja nie może być ujemna!");
+            PensjaZasadnicza = pensjaZasadnicza;
         }
 
         public override decimal ObliczPensje() => PensjaZasadnicza;
