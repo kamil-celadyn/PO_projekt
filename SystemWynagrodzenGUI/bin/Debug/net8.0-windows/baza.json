@@ -1,0 +1,17 @@
+[
+  {
+    "$type": "zlecenie",
+    "StawkaGodzinowa": 40,
+    "LiczbaGodzin": 60,
+    "Imie": "Julian",
+    "Nazwisko": "Staszewski",
+    "Pesel": "09837164781"
+  },
+  {
+    "$type": "etat",
+    "PensjaZasadnicza": 4000,
+    "Imie": "Alan",
+    "Nazwisko": "Nala",
+    "Pesel": "01219837652"
+  }
+]

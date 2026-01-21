@@ -1,0 +1,53 @@
+﻿<Window x:Class="SystemWynagrodzen.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="System Kadrowy 2025" Height="450" Width="800">
+    <Grid Margin="10">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="2*"/>
+            <ColumnDefinition Width="1*"/>
+        </Grid.ColumnDefinitions>
+
+        <GroupBox Header="Lista Pracowników" Grid.Column="0" Margin="0,0,10,0">
+            <DockPanel>
+                <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal" HorizontalAlignment="Center" Margin="5">
+                    <Button Name="btnSortuj" Content="Sortuj (A-Z)" Width="100" Margin="5" Click="btnSortuj_Click"/>
+                    <Button Name="btnUsun" Content="Usuń zaznaczone" Width="120" Margin="5" Click="btnUsun_Click"/>
+                </StackPanel>
+                <ListBox Name="lstPracownicy" Margin="5"/>
+            </DockPanel>
+        </GroupBox>
+
+        <GroupBox Header="Dodaj / Zarządzaj" Grid.Column="1">
+            <StackPanel Margin="5">
+                <Label Content="Imię:"/>
+                <TextBox Name="txtImie"/>
+
+                <Label Content="Nazwisko:"/>
+                <TextBox Name="txtNazwisko"/>
+
+                <Label Content="PESEL (11 cyfr):"/>
+                <TextBox Name="txtPesel" MaxLength="11"/>
+
+                <Label Content="Typ umowy:"/>
+                <ComboBox Name="cmbTyp" SelectionChanged="cmbTyp_SelectionChanged">
+                    <ComboBoxItem Content="Umowa o Pracę" IsSelected="True"/>
+                    <ComboBoxItem Content="Umowa Zlecenie"/>
+                </ComboBox>
+
+                <Label Name="lblZmienna1" Content="Pensja (PLN):"/>
+                <TextBox Name="txtZmienna1"/>
+
+                <Label Name="lblZmienna2" Content="Liczba godzin:" Visibility="Collapsed"/>
+                <TextBox Name="txtZmienna2" Visibility="Collapsed"/>
+
+                <Button Name="btnDodaj" Content="Dodaj Pracownika" Margin="0,15,0,5" Height="30" Click="btnDodaj_Click" Background="#DDDDDD"/>
+
+                <Separator Margin="0,10"/>
+
+                <Button Name="btnZapisz" Content="Zapisz do pliku" Margin="0,5" Click="btnZapisz_Click"/>
+                <Button Name="btnWczytaj" Content="Wczytaj z pliku" Margin="0,5" Click="btnWczytaj_Click"/>
+            </StackPanel>
+        </GroupBox>
+    </Grid>
+</Window>

@@ -34,5 +34,18 @@ namespace SystemWynagrodzen
             string json = File.ReadAllText(nazwaPliku);
             _pracownicy = JsonSerializer.Deserialize<List<Pracownik>>(json) ?? new List<Pracownik>();
         }
+        public void UsunPracownika(int index)
+        {
+            // Sprawdzamy, czy taki numer istnieje na liście
+            if (index >= 0 && index < _pracownicy.Count)
+            {
+                _pracownicy.RemoveAt(index);
+            }
+            else
+            {
+                // Opcjonalnie: rzuć wyjątek, jeśli indeks jest błędny
+                throw new KadryException("Nie wybrano pracownika do usunięcia lub lista jest pusta.");
+            }
+        }
     }
 }
