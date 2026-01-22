@@ -1,26 +1,79 @@
 # System Ewidencji Pracowników i Obliczania Wynagrodzeń 💼
 
 **Projekt zaliczeniowy: Programowanie Obiektowe** **Rok akademicki:** 2025/2026  
-**Technologia:** C# / WPF / .NET 6.0
 
 ![Główny widok aplikacji](image_05c1d3.png)
 
 ## 📖 O projekcie
 
-Aplikacja typu Desktop (WPF) służąca do obsługi działu kadr w małym przedsiębiorstwie. System umożliwia ewidencjonowanie pracowników różnych typów (etatowych oraz zleceniobiorców), automatyczne obliczanie ich wynagrodzeń zgodnie z typem umowy oraz trwały zapis danych w formacie JSON.
+Aplikacja typu Desktop (WPF) służąca do obsługi działu kadr w małym przedsiębiorstwie. System umożliwia ewidencjonowanie pracowników różnych typów (etatowych oraz zleceniobiorców), automatyczne obliczanie ich wynagrodzeń zgodnie z typem umowy oraz trwały zapis danych.
 
-Głównym celem projektowym było praktyczne zastosowanie paradygmatów **programowania obiektowego**, takich jak:
-- Dziedziczenie i Polimorfizm
-- Hermetyzacja danych
-- Obsługa wyjątków
-- Interfejsy
+Głównym celem projektowym było praktyczne zastosowanie paradygmatów **programowania obiektowego** (OOP), takich jak dziedziczenie, polimorfizm, hermetyzacja oraz obsługa wyjątków.
 
-### Kluczowe funkcjonalności
-* ✅ **Ewidencja pracowników:** Dodawanie pracowników na Umowę o Pracę i Umowę Zlecenie.
-* ✅ **Inteligentne formularze:** Dynamiczne dostosowanie pól w zależności od wybranego typu umowy.
-* ✅ **Polimorficzne obliczenia:** Automatyczne wyliczanie pensji (netto/brutto/godzinowe) w zależności od klasy pracownika.
-* ✅ **Persystencja danych:** Zapis i odczyt bazy pracowników z pliku `baza.json`.
-* ✅ **Sortowanie i Walidacja:** Sortowanie alfabetyczne oraz weryfikacja poprawności PESEL (11 cyfr) i stawek.
+---
+
+## 🛠 Metryka Projektu i Technologie
+
+* **Język programowania:** C# (.NET 6.0 / 8.0)
+* **Technologia interfejsu:** WPF (Windows Presentation Foundation)
+* **Format zapisu danych:** JSON (`System.Text.Json`)
+* **Środowisko programistyczne:** Visual Studio 2022
+* **Wersja:** 1.0
+
+---
+
+## 🏗 Architektura Systemu
+
+System został zaprojektowany zgodnie z wzorcami OOP i dzieli się na dwie główne warstwy:
+
+![Diagram UML](image_05c13a.png)
+
+### 1. Warstwa Logiki Biznesowej (Backend)
+Odpowiada za przetwarzanie danych, walidację i obliczenia.
+* **`Pracownik` (Klasa abstrakcyjna):** Definiuje wspólny interfejs dla wszystkich typów pracowników. Zawiera mechanizm walidacji numeru PESEL w setterze właściwości (hermetyzacja).
+* **`PracownikEtatowy` i `Zleceniobiorca`:** Klasy pochodne implementujące specyficzne metody obliczania wynagrodzenia (`ObliczPensje`) – **polimorfizm**.
+* **`SystemKadrowy`:** Klasa zarządzająca kolekcją (`List<T>`). Pełni rolę kontrolera – obsługuje dodawanie obiektów, zapobiega duplikatom oraz realizuje serializację danych.
+
+### 2. Warstwa Prezentacji (Frontend)
+* **`MainWindow.xaml`:** Definicja wyglądu aplikacji oparta na języku znaczników XAML (Grid layout).
+* **`MainWindow.xaml.cs` (Code-behind):** Obsługuje zdarzenia interfejsu (kliknięcia przycisków, wybór z listy rozwijanej) i komunikuje się z obiektem `SystemKadrowy`.
+
+---
+
+## 💾 Struktura Danych i Plików
+
+Dane przechowywane są lokalnie w pliku `baza_kadrowa.json`. Serializacja odbywa się przy użyciu biblioteki `System.Text.Json` z opcją `WriteIndented = true`, co zapewnia czytelność pliku dla człowieka.
+
+Dzięki atrybutowi `[JsonDerivedType]` w klasie bazowej, system automatycznie rozpoznaje typ obiektu (polimorficzna deserializacja).
+
+**Przykładowa struktura zapisu (JSON):**
+```json
+[
+  {
+    "$type": "etat",
+    "PensjaZasadnicza": 5000.0,
+    "Imie": "Jan",
+    "Nazwisko": "Kowalski",
+    "Pesel": "90010112345"
+  },
+  {
+    "$type": "zlecenie",
+    "StawkaGodzinowa": 50.0,
+    "LiczbaGodzin": 160,
+    "Imie": "Anna",
+    "Nazwisko": "Nowak",
+    "Pesel": "92030354321"
+  }
+]
+```
+## ⚠️ Obsługa Błędów
+
+System wykorzystuje własną klasę wyjątków `KadryException` do zgłaszania błędów logiki biznesowej. Wyjątki te są przechwytywane w warstwie GUI i prezentowane użytkownikowi w formie okien dialogowych `MessageBox`.
+
+**Obsługiwane przypadki:**
+* Próba dodania pracownika z błędnym PESEL (inna długość niż 11 znaków).
+* Próba ustawienia ujemnej pensji lub stawki.
+* Próba dodania duplikatu pracownika.
 
 ---
 
@@ -28,54 +81,27 @@ Głównym celem projektowym było praktyczne zastosowanie paradygmatów **progra
 
 | Imię i Nazwisko | Rola | Odpowiedzialność |
 | :--- | :--- | :--- |
-| **Kamil Celadyn** | Backend Developer | Abstrakcyjna logika biznesowa (`Pracownik`, `SystemKadrowy`), dziedziczenie, polimorfizm, serializacja JSON. |
-| **Oskar Fryc** | Frontend Developer | Interfejs graficzny (WPF/XAML), logika interakcji użytkownika, obsługa zdarzeń i binding danych. |
-| **Mykhailo Bondar** | QA & Docs | Obsługa błędów (`KadryException`), interfejsy (`IBonusowalny`), Diagram UML oraz dokumentacja techniczna. |
+| **Kamil Celadyn** | Backend Dev | Abstrakcyjna logika biznesowa (`Pracownik`, `SystemKadrowy`), dziedziczenie, polimorfizm, serializacja JSON. |
+| **Oskar Fryc** | Frontend Dev | Projekt i implementacja interfejsu graficznego (WPF - `MainWindow.xaml`), logika interakcji użytkownika. |
+| **Mykhailo Bondar** | QA & Docs | Implementacja obsługi błędów (`KadryException`), interfejsy (`IBonusowalny`), Diagram UML, dokumentacja. |
 
 ---
 
-## 🏗 Architektura i Diagram UML
+## 🚀 Instrukcja Obsługi (Szybki Start)
 
-Projekt został zaprojektowany z zachowaniem podziału na logikę biznesową i warstwę prezentacji.
-
-![Diagram UML](image_05c13a.png)
-
-### Opis najważniejszych klas:
-
-1.  **`Pracownik` (Klasa Abstrakcyjna)** Fundament systemu. Definiuje wspólne cechy (Imię, Nazwisko, PESEL). Wymusza implementację metody `ObliczPensje()` na klasach pochodnych. Implementuje interfejsy `IComparable` (do sortowania) i `IEquatable`.
-
-2.  **`PracownikEtatowy` i `Zleceniobiorca`** Klasy dziedziczące po `Pracownik`. `PracownikEtatowy` implementuje dodatkowo interfejs `IBonusowalny` (premie), a `Zleceniobiorca` wylicza pensję na podstawie stawki godzinowej.
-
-3.  **`SystemKadrowy` (Logika)** Klasa zarządzająca kolekcją `List<Pracownik>`. Odpowiada za dodawanie (z walidacją duplikatów), usuwanie oraz serializację danych.
-
-4.  **`KadryException`** Własna klasa wyjątków służąca do precyzyjnego raportowania błędów logiki biznesowej użytkownikowi.
+1. **Uruchomienie:** Otwórz plik wykonywalny `SystemWynagrodzen.exe` (wymagany .NET Runtime 6.0+).
+2. **Dodawanie:** Wypełnij panel po prawej stronie (Imię, Nazwisko, PESEL). Wybierz typ umowy – formularz dostosuje pola automatycznie.
+3. **Zapis:** Kliknij "Zapisz do pliku", aby zachować zmiany w `baza.json`.
+4. **Sortowanie:** Użyj przycisku pod listą, aby posortować pracowników alfabetycznie (A-Z).
 
 ---
+## 📄 Pełna Dokumentacja
 
-## 🚀 Instrukcja Obsługi
+Kompletna dokumentacja projektu, w tym sprawozdanie oraz instrukcje, znajduje się w załączonych plikach PDF:
 
-### Wymagania
-* System operacyjny Windows
-* Zainstalowane środowisko .NET Runtime 6.0 (lub nowsze)
-
-### Szybki start
-1.  Uruchom plik `SystemWynagrodzen.exe`.
-2.  **Dodawanie:** W panelu po prawej stronie wypełnij dane.
-    * Wybierz *Typ umowy*.
-    * Dla **Umowy o Pracę** wpisz pensję miesięczną.
-    * Dla **Umowy Zlecenie** wpisz stawkę za godzinę i liczbę godzin.
-3.  Kliknij **Dodaj Pracownika**.
-4.  **Zapis:** Aby zachować dane, kliknij "Zapisz do pliku".
-
-![Dodawanie pracownika](image_05c47b.png)
-
-### Rozwiązywanie problemów
-
-| Objaw | Przyczyna | Rozwiązanie |
-| :--- | :--- | :--- |
-| Komunikat: *"PESEL musi składać się z 11 cyfr!"* | Wpisano za krótki/długi numer. | Sprawdź długość numeru PESEL. |
-| Komunikat: *"Pensja nie może być ujemna!"* | Wpisano wartość ujemną. | Wpisz kwotę dodatnią. |
-| Program nie wczytuje danych | Brak pliku `baza.json`. | Upewnij się, że wcześniej użyto przycisku "Zapisz". |
+* 📄 `Sprawozdanie.pdf`
+* 📄 `Dokumentacja_Techniczna.pdf`
+* 📄 `Instrukcja_Uzytkownika.pdf`
 
 ---
-&copy; 2025 Zespół Projektowy. Wszelkie prawa zastrzeżone.
+&copy; 2026 Zespół Projektowy. Wszelkie prawa zastrzeżone.
